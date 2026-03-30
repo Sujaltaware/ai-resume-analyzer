@@ -73,6 +73,10 @@ const interviewReportSchema = new mongoose.Schema({
         min: 0,
         max: 100
     },
+    title: {
+        type: String,
+        default: ''
+    },
     technicalQuestions: [TechnicalQuestionSchema],
     behavioralQuestions: [behavioralQuestionSchema],
     skillsGap: [skillsGapSchema],

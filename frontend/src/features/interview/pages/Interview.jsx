@@ -35,9 +35,9 @@ const IconDownload = () => (
 
 // ── Nav config ─────────────────────────────────────────────────────────────────
 const NAV_ITEMS = [
-    { id: 'technical',  label: 'Technical',  sub: 'Questions', icon: <IconCode /> },
+    { id: 'technical', label: 'Technical', sub: 'Questions', icon: <IconCode /> },
     { id: 'behavioral', label: 'Behavioral', sub: 'Questions', icon: <IconChat /> },
-    { id: 'roadmap',    label: 'Road Map',   sub: 'Day plan',  icon: <IconMap />  },
+    { id: 'roadmap', label: 'Road Map', sub: 'Day plan', icon: <IconMap /> },
 ]
 
 // ── QuestionCard ───────────────────────────────────────────────────────────────
@@ -128,7 +128,7 @@ const ScoreRing = ({ score }) => {
 // ── Main Component ─────────────────────────────────────────────────────────────
 const Interview = () => {
     const [activeNav, setActiveNav] = useState('technical')
-    const { report, loading, getReportById } = useInterview()
+    const { report, loading, getReportById, getResumePdf } = useInterview()
     const { interviewId } = useParams()
 
     useEffect(() => {
@@ -153,9 +153,9 @@ const Interview = () => {
     const data = report
 
     const counts = {
-        technical:  data.technicalQuestions?.length || 0,
+        technical: data.technicalQuestions?.length || 0,
         behavioral: data.behavioralQuestions?.length || 0,
-        roadmap:    data.preparationTips?.length || 0,
+        roadmap: data.preparationTips?.length || 0,
     }
 
     return (
@@ -189,7 +189,9 @@ const Interview = () => {
                         ))}
                     </div>
 
-                    <button className='iv-nav__download'>
+                    <button className='iv-nav__download' onClick={() => {
+                        getResumePdf(interviewId)
+                    }}>
                         <IconDownload />
                         <span>Download Resume</span>
                     </button>
@@ -272,7 +274,8 @@ const Interview = () => {
 
                     <div className='iv-sidebar__job'>
                         <p className='iv-sidebar__job-label'>Role</p>
-                        <p className='iv-sidebar__job-title'>{data.title}</p>
+                        <p className='iv-sidebar__job-title'>{data.title || data.jobDescription?.split('\n')[0] || 'Full Stack Developer'}</p>
+                        <p className={`match-score ${report.matchScore >= 80 ? 'score--high' : report.matchScore >= 60 ? 'score--mid' : 'score--low'}`}>Match Score: {report.matchScore}%</p>
                     </div>
 
                 </aside>
