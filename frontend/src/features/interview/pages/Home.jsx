@@ -1,11 +1,17 @@
 import React, { useState, useRef } from 'react'
+import { useInterview } from '../hooks/use.interview'
 import "../style/home.scss"
+import { useNavigate } from 'react-router'
 
 const Home = () => {
+    const {loading , generateReport} = useInterview()
+
     const [fileName, setFileName] = useState(null)
     const [jdText, setJdText] = useState('')
     const [dragging, setDragging] = useState(false)
     const fileRef = useRef()
+
+    const navigate = useNavigate()
 
     const handleFile = (file) => {
         if (file && file.type === 'application/pdf') {
@@ -13,13 +19,30 @@ const Home = () => {
         }
     }
 
-    const handleDrop = (e) => {
+    const handleDrop =  (e) => {
         e.preventDefault()
         setDragging(false)
         const file = e.dataTransfer.files[0]
         handleFile(file)
     }
 
+    const handleGenrateReport = async () => {
+        const resumeFile = fileRef.current.files[0]
+        const report = await generateReport({ jobDescription: jdText, resumeFile })
+        if (!report) {
+            console.error('Report generation failed or returned null')
+            return
+        }
+        navigate(`/interview/${report._id}`)
+    }
+
+    if(loading) {
+        return(
+            <main>
+                <h1>Loading your report</h1>
+            </main>
+        )
+    }
     const wordCount = jdText.trim() ? jdText.trim().split(/\s+/).length : 0
 
     return (
@@ -117,6 +140,7 @@ const Home = () => {
                     <button
                         className={`home__btn ${jdText.trim() && fileName ? 'home__btn--ready' : ''}`}
                         disabled={!jdText.trim() || !fileName}
+                        onClick={handleGenrateReport}
                     >
                         <span>Generate Interview Report</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
