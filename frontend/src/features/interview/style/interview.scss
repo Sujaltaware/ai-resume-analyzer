@@ -1,0 +1,676 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+// ── Tokens — exact mirror of home.scss ───────────────────────────────────────
+$bg:          #06060a;
+$surface:     #0f0f17;
+$panel:       #13131e;
+$border:      rgba(255, 255, 255, 0.08);
+$border-hi:   rgba(255, 255, 255, 0.14);
+$text:        #e8e8f0;
+$muted:       rgba(232, 232, 240, 0.45);
+$accent:      #6c63ff;
+$accent2:     #00d4aa;
+$danger:      #ff4d6d;
+$warning:     #f59e0b;
+$font-serif:  'Instrument Serif', serif;
+$font-sans:   'DM Sans', sans-serif;
+$radius-lg:   20px;
+$radius-md:   12px;
+$radius-sm:   8px;
+
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+*::-webkit-scrollbar { width: 4px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+// ── Loading screen ────────────────────────────────────────────────────────────
+.iv-loading {
+    min-height: 100vh;
+    background: $bg;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-family: $font-sans;
+    color: $muted;
+    font-size: 14px;
+
+    &__spinner {
+        width: 36px;
+        height: 36px;
+        border: 2.5px solid rgba(108, 99, 255, 0.2);
+        border-top-color: $accent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+// ── Page shell ────────────────────────────────────────────────────────────────
+.iv-page {
+    font-family: $font-sans;
+    background: $bg;
+    color: $text;
+    min-height: 100vh;
+    width: 100%;
+    padding: 20px;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+}
+
+.iv-bg-grid {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+    background-size: 56px 56px;
+}
+
+// ── 3-column layout ───────────────────────────────────────────────────────────
+.iv-layout {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    background: $surface;
+    border: 1px solid $border;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.03),
+        0 32px 64px rgba(0, 0, 0, 0.5);
+    animation: fadeUp 0.55s ease both;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.iv-divider {
+    width: 1px;
+    background: $border;
+    flex-shrink: 0;
+}
+
+// ── Left nav ──────────────────────────────────────────────────────────────────
+.iv-nav {
+    width: 230px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 12px;
+    gap: 4px;
+
+    &__top {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    &__brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 8px;
+        margin-bottom: 24px;
+    }
+
+    &__brand-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, $accent, $accent2);
+        box-shadow: 0 0 10px rgba(108, 99, 255, 0.6);
+    }
+
+    &__brand-name {
+        font-family: $font-serif;
+        font-size: 18px;
+        font-style: italic;
+        color: $text;
+        letter-spacing: -0.01em;
+    }
+
+    &__heading {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(232, 232, 240, 0.25);
+        padding: 0 10px;
+        margin-bottom: 6px;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 10px 10px;
+        background: none;
+        border: none;
+        border-radius: $radius-sm;
+        color: $muted;
+        font-family: $font-sans;
+        font-size: 13px;
+        cursor: pointer;
+        text-align: left;
+        transition: background 0.15s, color 0.15s;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: $text;
+        }
+
+        &--active {
+            background: rgba(108, 99, 255, 0.12);
+            color: $accent;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+
+            .iv-nav__icon svg {
+                stroke: $accent;
+            }
+        }
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        opacity: 0.7;
+
+        .iv-nav__item--active & { opacity: 1; }
+    }
+
+    &__item-text {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+
+    &__item-label {
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1;
+    }
+
+    &__item-sub {
+        font-size: 10px;
+        color: rgba(232, 232, 240, 0.3);
+        line-height: 1;
+
+        .iv-nav__item--active & { color: rgba(108, 99, 255, 0.6); }
+    }
+
+    &__download {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 11px 14px;
+        background: rgba(108, 99, 255, 0.1);
+        border: 1px solid rgba(108, 99, 255, 0.25);
+        border-radius: $radius-sm;
+        color: $accent;
+        font-family: $font-sans;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s, border-color 0.2s, transform 0.15s;
+
+        span { flex: 1; text-align: left; }
+
+        &:hover {
+            background: rgba(108, 99, 255, 0.18);
+            border-color: rgba(108, 99, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        &:active { transform: translateY(0); }
+    }
+}
+
+// ── Center content ────────────────────────────────────────────────────────────
+.iv-content {
+    flex: 1;
+    padding: 28px 32px;
+    overflow-y: auto;
+    max-height: calc(100vh - 40px);
+}
+
+.iv-section {
+    animation: fadeUp 0.35s ease both;
+}
+
+.iv-content-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid $border;
+
+    h2 {
+        font-family: $font-serif;
+        font-size: 22px;
+        font-weight: 400;
+        font-style: italic;
+        color: $text;
+        letter-spacing: -0.01em;
+    }
+
+    &__badge {
+        font-size: 11px;
+        font-weight: 500;
+        color: $muted;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid $border;
+        padding: 3px 10px;
+        border-radius: 100px;
+    }
+}
+
+// ── Question cards ────────────────────────────────────────────────────────────
+.q-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.q-card {
+    background: $panel;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    overflow: hidden;
+    transition: border-color 0.2s;
+
+    &:hover { border-color: $border-hi; }
+
+    &--open {
+        border-color: rgba(108, 99, 255, 0.3);
+        box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.06);
+    }
+
+    &__header {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 16px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    &__index {
+        flex-shrink: 0;
+        font-size: 10px;
+        font-weight: 700;
+        color: $accent;
+        background: rgba(108, 99, 255, 0.12);
+        border: 1px solid rgba(108, 99, 255, 0.2);
+        border-radius: 5px;
+        padding: 3px 7px;
+        margin-top: 1px;
+        letter-spacing: 0.04em;
+    }
+
+    &__question {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 500;
+        color: $text;
+        line-height: 1.55;
+    }
+
+    &__chevron {
+        flex-shrink: 0;
+        color: $muted;
+        margin-top: 2px;
+        transition: transform 0.25s ease, color 0.2s;
+
+        &--open {
+            transform: rotate(180deg);
+            color: $accent;
+        }
+    }
+
+    &__body {
+        padding: 0 16px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        border-top: 1px solid $border;
+        padding-top: 14px;
+        animation: fadeUp 0.2s ease both;
+    }
+
+    &__section {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        p {
+            font-size: 13px;
+            color: rgba(232, 232, 240, 0.65);
+            line-height: 1.7;
+        }
+    }
+
+    &__tag {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 3px 8px;
+        border-radius: 4px;
+        width: fit-content;
+
+        &--intention {
+            color: #a78bfa;
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
+        &--answer {
+            color: $accent2;
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid rgba(0, 212, 170, 0.2);
+        }
+    }
+}
+
+// ── Road map ──────────────────────────────────────────────────────────────────
+.roadmap-list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    &__line {
+        position: absolute;
+        left: 16px;
+        top: 14px;
+        bottom: 14px;
+        width: 1.5px;
+        background: linear-gradient(to bottom, $accent, rgba(108, 99, 255, 0.1));
+        border-radius: 2px;
+    }
+}
+
+.roadmap-day {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 12px 0;
+    position: relative;
+
+    &__dot {
+        flex-shrink: 0;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: $surface;
+        border: 2px solid $accent;
+        margin-top: 6px;
+        box-shadow: 0 0 8px rgba(108, 99, 255, 0.4);
+        z-index: 1;
+    }
+
+    &__card {
+        flex: 1;
+        background: $panel;
+        border: 1px solid $border;
+        border-radius: $radius-md;
+        padding: 14px 16px;
+        transition: border-color 0.2s;
+
+        &:hover { border-color: $border-hi; }
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    &__badge {
+        font-size: 10px;
+        font-weight: 700;
+        color: $accent;
+        background: rgba(108, 99, 255, 0.12);
+        border: 1px solid rgba(108, 99, 255, 0.25);
+        padding: 3px 9px;
+        border-radius: 100px;
+        letter-spacing: 0.04em;
+    }
+
+    &__focus {
+        font-size: 14px;
+        font-weight: 600;
+        color: $text;
+        letter-spacing: -0.01em;
+    }
+
+    &__tasks {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(232, 232, 240, 0.55);
+            line-height: 1.6;
+        }
+    }
+
+    &__bullet {
+        flex-shrink: 0;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: $accent;
+        opacity: 0.5;
+        margin-top: 8px;
+    }
+}
+
+// ── Right sidebar ─────────────────────────────────────────────────────────────
+.iv-sidebar {
+    width: 248px;
+    flex-shrink: 0;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    &__divider {
+        height: 1px;
+        background: $border;
+    }
+
+    &__job-label {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(232, 232, 240, 0.25);
+        margin-bottom: 6px;
+    }
+
+    &__job-title {
+        font-family: $font-serif;
+        font-size: 15px;
+        font-style: italic;
+        color: $text;
+        line-height: 1.4;
+    }
+}
+
+// ── Score ring ────────────────────────────────────────────────────────────────
+.score-ring {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    &__label {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(232, 232, 240, 0.25);
+        align-self: flex-start;
+    }
+
+    &__wrap {
+        position: relative;
+        width: 108px;
+        height: 108px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    svg {
+        position: absolute;
+        top: 0; left: 0;
+    }
+
+    &__inner {
+        position: relative;
+        display: flex;
+        align-items: baseline;
+        gap: 1px;
+    }
+
+    &__value {
+        font-size: 30px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.03em;
+    }
+
+    &__pct {
+        font-size: 13px;
+        color: $muted;
+        margin-bottom: 2px;
+    }
+
+    &__sub {
+        font-size: 12px;
+        font-weight: 500;
+        text-align: center;
+    }
+}
+
+// ── Skill gaps ────────────────────────────────────────────────────────────────
+.skill-gaps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &__label {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(232, 232, 240, 0.25);
+    }
+
+    &__list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+}
+
+.skill-tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid;
+    letter-spacing: 0.01em;
+
+    &--high {
+        color: $danger;
+        background: rgba(255, 77, 109, 0.1);
+        border-color: rgba(255, 77, 109, 0.25);
+    }
+
+    &--medium {
+        color: $warning;
+        background: rgba(245, 158, 11, 0.1);
+        border-color: rgba(245, 158, 11, 0.25);
+    }
+
+    &--low {
+        color: $accent2;
+        background: rgba(0, 212, 170, 0.1);
+        border-color: rgba(0, 212, 170, 0.25);
+    }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 900px) {
+    .iv-page { padding: 12px; }
+
+    .iv-layout {
+        flex-direction: column;
+        border-radius: $radius-md;
+    }
+
+    .iv-divider { width: 100%; height: 1px; }
+
+    .iv-nav {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        padding: 14px 16px;
+        gap: 8px;
+        flex-wrap: wrap;
+
+        &__brand { margin-bottom: 0; }
+        &__heading { display: none; }
+        &__top { flex-direction: row; align-items: center; gap: 6px; flex: 1; }
+        &__item-sub { display: none; }
+        &__download { width: auto; }
+    }
+
+    .iv-content {
+        max-height: none;
+        padding: 20px;
+    }
+
+    .iv-sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 20px;
+        gap: 16px;
+
+        &__divider { display: none; }
+    }
+
+    .score-ring { align-items: flex-start; }
+    .skill-gaps { flex: 1; }
+}
