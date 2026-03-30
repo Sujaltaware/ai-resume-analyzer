@@ -1,0 +1,308 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+// ── Tokens (mirror home.scss) ─────────────────────────────────────────────────
+$bg:        #06060a;
+$surface:   #0f0f17;
+$panel:     #13131e;
+$border:    rgba(255, 255, 255, 0.08);
+$text:      #e8e8f0;
+$muted:     rgba(232, 232, 240, 0.45);
+$accent:    #6c63ff;
+$accent2:   #00d4aa;
+$font-serif: 'Instrument Serif', serif;
+$font-sans:  'DM Sans', sans-serif;
+
+// ── Page shell (shared by page + report variants) ─────────────────────────────
+.ld {
+    font-family: $font-sans;
+
+    &--page {
+        min-height: 100vh;
+        width: 100%;
+        background: $bg;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    // ── Orbs (same as home.scss) ──────────────────────────────────────────────
+    &__bg-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        pointer-events: none;
+
+        &--1 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(108,99,255,0.18) 0%, transparent 70%);
+            top: -150px; left: -100px;
+            animation: orbDrift1 14s ease-in-out infinite alternate;
+        }
+        &--2 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(0,212,170,0.12) 0%, transparent 70%);
+            bottom: -100px; right: -80px;
+            animation: orbDrift2 16s ease-in-out infinite alternate;
+        }
+    }
+
+    // ── Center body ───────────────────────────────────────────────────────────
+    &__body {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        text-align: center;
+        padding: 0 24px;
+    }
+
+    // ── Spinner (reusable across variants) ────────────────────────────────────
+    &__spinner {
+        display: inline-block;
+        border-radius: 50%;
+        border: 2.5px solid rgba(108, 99, 255, 0.2);
+        border-top-color: $accent;
+        animation: spin 0.75s linear infinite;
+        flex-shrink: 0;
+
+        // sizes
+        width: 36px; height: 36px; // default
+
+        &--sm {
+            width: 16px; height: 16px;
+            border-width: 2px;
+        }
+
+        &--lg {
+            width: 48px; height: 48px;
+            border-width: 3px;
+        }
+    }
+
+    // ── Text ──────────────────────────────────────────────────────────────────
+    &__title {
+        font-family: $font-serif;
+        font-size: 22px;
+        font-style: italic;
+        font-weight: 400;
+        color: $text;
+        letter-spacing: -0.01em;
+        margin: 0;
+    }
+
+    &__text {
+        font-size: 14px;
+        color: $muted;
+        margin: 0;
+
+        &--sm { font-size: 13px; }
+    }
+
+    &__sub {
+        font-size: 13px;
+        color: $muted;
+        max-width: 320px;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    // ── Animated ring (report variant) ────────────────────────────────────────
+    &__ring {
+        position: relative;
+        width: 72px;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+    }
+
+    &__ring-arc {
+        animation: arcSpin 2s ease-in-out infinite;
+    }
+
+    &__ring-icon {
+        position: absolute;
+        font-size: 22px;
+        background: linear-gradient(135deg, $accent, $accent2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    // ── Step indicators (report variant) ──────────────────────────────────────
+    &__steps {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 12px;
+        align-items: flex-start;
+    }
+
+    &__step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: stepFadeIn 0.5s ease both;
+    }
+
+    &__step-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: $accent;
+        animation: dotPulse 1.2s ease-in-out infinite;
+        flex-shrink: 0;
+        opacity: 0.4;
+    }
+
+    &__step-label {
+        font-size: 13px;
+        color: $muted;
+    }
+
+    // ── Inline variant ────────────────────────────────────────────────────────
+    &--inline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+}
+
+// ── Download overlay ──────────────────────────────────────────────────────────
+.ld-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 6, 10, 0.85);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    animation: fadeIn 0.25s ease both;
+
+    &__card {
+        background: $surface;
+        border: 1px solid $border;
+        border-radius: 20px;
+        padding: 36px 44px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        max-width: 340px;
+        width: 100%;
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.5);
+        animation: slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    &__icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: rgba(108, 99, 255, 0.1);
+        border: 1px solid rgba(108, 99, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $accent;
+        animation: iconBounce 1.5s ease-in-out infinite;
+    }
+
+    &__title {
+        font-family: $font-serif;
+        font-size: 17px;
+        font-style: italic;
+        font-weight: 400;
+        color: $text;
+        text-align: center;
+        margin: 0;
+        letter-spacing: -0.01em;
+    }
+
+    &__sub {
+        font-size: 12px;
+        color: $muted;
+        text-align: center;
+        margin: 0;
+    }
+
+    // ── Progress bar ──────────────────────────────────────────────────────────
+    &__bar {
+        width: 100%;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 99px;
+        overflow: hidden;
+        margin-top: 4px;
+    }
+
+    &__bar-fill {
+        height: 100%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, $accent, $accent2);
+        animation: barSlide 2s ease-in-out infinite;
+    }
+}
+
+// ── Keyframes ─────────────────────────────────────────────────────────────────
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes arcSpin {
+    0%   { stroke-dashoffset: 175; }
+    50%  { stroke-dashoffset: 44; }
+    100% { stroke-dashoffset: 175; }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.7; transform: scale(0.92); }
+}
+
+@keyframes dotPulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50%       { opacity: 1;   transform: scale(1.4); }
+}
+
+@keyframes stepFadeIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes barSlide {
+    0%   { width: 0%;    margin-left: 0%; }
+    50%  { width: 70%;   margin-left: 15%; }
+    100% { width: 0%;    margin-left: 100%; }
+}
+
+@keyframes iconBounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-4px); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes orbDrift1 {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(30px, 20px) scale(1.08); }
+}
+
+@keyframes orbDrift2 {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(-20px, -30px) scale(1.06); }
+}
