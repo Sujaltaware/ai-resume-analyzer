@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react'
 import { useInterview } from '../hooks/use.interview'
-import "../style/home.scss"
 import { useNavigate } from 'react-router'
+import Loading from '../components/Loading'
+import "../style/home.scss"
 
 const Home = () => {
-    const {loading , generateReport, reports} = useInterview()
-
+    const { loading, generateReport, reports } = useInterview()
     const [fileName, setFileName] = useState(null)
     const [jdText, setJdText] = useState('')
     const [dragging, setDragging] = useState(false)
@@ -19,7 +19,7 @@ const Home = () => {
         }
     }
 
-    const handleDrop =  (e) => {
+    const handleDrop = (e) => {
         e.preventDefault()
         setDragging(false)
         const file = e.dataTransfer.files[0]
@@ -27,22 +27,21 @@ const Home = () => {
     }
 
     const handleGenrateReport = async () => {
-        const resumeFile = fileRef.current.files[0]
-        const report = await generateReport({ jobDescription: jdText, resumeFile })
-        if (!report) {
-            console.error('Report generation failed or returned null')
-            return
+        try {
+            const resumeFile = fileRef.current.files[0]
+            const report = await generateReport({ jobDescription: jdText, resumeFile })
+            if (!report) {
+                console.error('Report generation failed or returned null')
+                return
+            }
+            navigate(`/interview/${report._id}`)
+        } catch (error) {
+             console.log(error)
         }
-        navigate(`/interview/${report._id}`)
+
     }
 
-    if(loading) {
-        return(
-            <main>
-                <h1>Loading your report</h1>
-            </main>
-        )
-    }
+    if (loading) return <Loading variant="report" />
     const wordCount = jdText.trim() ? jdText.trim().split(/\s+/).length : 0
 
     return (
@@ -65,7 +64,7 @@ const Home = () => {
                     skill gaps, and AI-generated interview questions in seconds.
                 </p>
             </div>
-            
+
 
             <div className="home__card">
 
@@ -116,8 +115,8 @@ const Home = () => {
                             <div className="home__file-info">
                                 <div className="home__file-icon">
                                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                        <polyline points="14,2 14,8 20,8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        <polyline points="14,2 14,8 20,8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 </div>
                                 <p className="home__file-name">{fileName}</p>
@@ -127,9 +126,9 @@ const Home = () => {
                             <div className="home__upload-prompt">
                                 <div className="home__upload-icon">
                                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                        <polyline points="17,8 12,3 7,8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                        <line x1="12" y1="3" x2="12" y2="15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        <polyline points="17,8 12,3 7,8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        <line x1="12" y1="3" x2="12" y2="15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                                     </svg>
                                 </div>
                                 <p className="home__upload-text">Drop your resume here</p>
@@ -145,7 +144,7 @@ const Home = () => {
                     >
                         <span>Generate Interview Report</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </button>
 
@@ -155,7 +154,7 @@ const Home = () => {
                 </div>
             </div>
 
-            {reports.length> 0 && (
+            {reports.length > 0 && (
                 <section className='recent-reports'>
                     <h2>My Recent Interview Plans</h2>
                     <ul className='reports-list'>

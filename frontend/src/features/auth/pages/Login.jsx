@@ -18,7 +18,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         await handleLogin({ email: credentials.email, password: credentials.password });
-        navigate("/");
+        navigate("/home");
 
     };
 

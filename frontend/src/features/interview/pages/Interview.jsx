@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useInterview } from '../hooks/use.interview'
 import { useParams } from 'react-router'
+import Loading from '../components/Loading'
 import '../style/interview.scss'
 
 
@@ -127,6 +128,7 @@ const ScoreRing = ({ score }) => {
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 const Interview = () => {
+    const [downloadLoading, setDownloadLoading] = useState(false)
     const [activeNav, setActiveNav] = useState('technical')
     const { report, loading, getReportById, getResumePdf } = useInterview()
     const { interviewId } = useParams()
@@ -137,9 +139,18 @@ const Interview = () => {
         }
     }, [interviewId, report, getReportById])
 
-    if (loading) {
-        return <main className='iv-loading'><h2>Loading report...</h2></main>
+    const handleDownload = async () => {
+        setDownloadLoading(true)
+        try {
+            await getResumePdf(interviewId) // your existing function
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setDownloadLoading(false)
+        }
     }
+
+    if (loading) return <Loading variant="download" />
 
     if (!report) {
         return (
@@ -188,10 +199,8 @@ const Interview = () => {
                             </button>
                         ))}
                     </div>
-
-                    <button className='iv-nav__download' onClick={() => {
-                        getResumePdf(interviewId)
-                    }}>
+                    {downloadLoading && <Loading variant="download" />}
+                    <button className='iv-nav__download' onClick={handleDownload}>
                         <IconDownload />
                         <span>Download Resume</span>
                     </button>
