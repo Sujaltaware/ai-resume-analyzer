@@ -33,13 +33,40 @@ Job Description:
 ${jobDescription}
     `;
 
-    const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
-        config: { responseMimeType: "application/json" },
-    });
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-3-flash-preview",
+            contents: prompt,
+            config: { responseMimeType: "application/json" },
+        });
 
-    return JSON.parse(response.text);
+        const text = response?.text || response?.output?.[0]?.content?.[0]?.text;
+        if (!text) {
+            throw new Error(`Empty AI response: ${JSON.stringify(response)}`);
+        }
+
+        try {
+            return JSON.parse(text);
+        } catch (parseError) {
+            // Try to extract JSON from wrapped text (if model added markdown fences)
+            const trimmed = text.trim();
+            const jsonMatch = trimmed.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                return JSON.parse(jsonMatch[0]);
+            }
+            throw new Error(`Cannot parse AI response as JSON: ${parseError.message}; text=${text}`);
+        }
+    } catch (error) {
+        console.error('generateInterviewReport error:', {
+            message: error.message,
+            stack: error.stack,
+            response: error.response ? {
+                status: error.response.status,
+                data: error.response.data
+            } : null
+        });
+        throw error;
+    }
 }
 
 module.exports = generateInterviewReport;
