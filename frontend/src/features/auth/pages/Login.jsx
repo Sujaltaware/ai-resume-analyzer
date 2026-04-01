@@ -28,7 +28,7 @@ const Login = () => {
 
                 <div className="brand">
                     <div className="brand__mark">✦</div>
-                    <span className="brand__name">ResumeAI</span>
+                    <span className="brand__name">PrepIQ</span>
                 </div>
 
                 <div className="form-header">
