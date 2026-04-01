@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("./config/passport.config");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
@@ -9,6 +10,7 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
+app.use(passport.initialize()) 
 app.use(cookieParser());
  
 

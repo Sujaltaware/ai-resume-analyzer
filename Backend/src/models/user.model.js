@@ -13,13 +13,24 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        default: null
     },
-    // role: {
-    //     type: String,
-    //     enum: ["user", "admin"],
-    //     default: "user"
-    // }
+    googleId: {
+        type: String,
+        default: null
+    },
+    githubId: {
+        type: String,
+        default: null
+    },
+    resetPasswordToken: {
+        type: String,
+        default: null
+    },
+    resetPasswordExpires: {
+        type: Date,
+        default: null
+    }
 })
 
 const User = mongoose.model("User", userSchema);
