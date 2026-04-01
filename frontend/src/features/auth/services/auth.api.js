@@ -3,7 +3,7 @@ import axios from "axios";
 
 const api = axios.create({
     baseURL: "http://localhost:3000",
-    withCredentials: true  
+    withCredentials: true
 });
 
 
@@ -43,13 +43,24 @@ export async function logout() {
         const response = await api.post("/api/auth/logout", {}, {
             withCredentials: true
         });
-        
+
         return response.data;
 
     } catch (error) {
         console.error("Logout error:", error.response ? error.response.data : error.message);
         throw error;
     }
+}
+
+export async function  forgotPassword({ email }) {
+    const response = await api.post('/api/auth/forgot-password', { email })
+    return response.data
+    
+}
+
+export async function resetPassword({ token, password }) {
+    const response = await api.post(`/api/auth/reset-password/${token}`, { password })
+    return response.data
 }
 
 export async function getProfile() {

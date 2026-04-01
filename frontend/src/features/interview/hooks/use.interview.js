@@ -98,4 +98,3 @@ export const useInterview = () => {
 
     return { loading, report, reports, generateReport, getReportById, getAllReports, getResumePdf }
 }
-

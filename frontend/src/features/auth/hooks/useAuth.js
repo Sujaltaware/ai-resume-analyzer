@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../auth.context.jsx";
-import { login, register, logout, getProfile } from "../services/auth.api.js";
+import { login, register, logout, getProfile, forgotPassword, resetPassword} from "../services/auth.api.js";
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
@@ -54,17 +54,43 @@ export const useAuth = () => {
             console.log("Profile fetched successfully:", data.user);
         } catch (error) {
             console.error("Profile fetch failed:", error);
-            if(error.response && error.response.status == 401) {
-                setUser(null);  
+            if (error.response && error.response.status == 401) {
+                setUser(null);
             }
         } finally {
             setLoading(false);
         }
     }
 
-    useEffect(() => {
-        fetchProfile();
-    }, []); 
+    const handleForgotPassword = async ({ email }) => {
+        setLoading(true)
+        try {
+            const data = await forgotPassword({ email })
+            return { success: true, message: data.message }
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Something went wrong.' }
+        } finally {
+            setLoading(false)
+        }
+    }
 
-    return { user, loading, handleLogin, handleRegister, handleLogout};
+    const handleResetPassword = async ({ token, password }) => {
+        setLoading(true)
+        try {
+            const data = await resetPassword({ token, password })
+            return { success: true, message: data.message }
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Something went wrong.' }
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        if (!user) {
+            fetchProfile();
+        }
+    }, []);
+
+    return { user, loading, handleLogin, handleRegister, handleLogout, handleForgotPassword, handleResetPassword };
 }   

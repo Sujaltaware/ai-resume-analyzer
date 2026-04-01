@@ -1,18 +1,29 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+import { useAuth } from '../../auth/hooks/useAuth'
 import { useInterview } from '../hooks/use.interview'
 import { useNavigate } from 'react-router'
 import Loading from '../components/Loading'
+import ProfileDropdown from '../components/ProfileDropdown'
 import "../style/home.scss"
 
+// ── Home Component ─────────────────────────────────────────────────────────────
 const Home = () => {
+    // ── Hooks ──────────────────────────────────────────────────────────────────
     const { loading, generateReport, reports } = useInterview()
+    const { user, handleLogout } = useAuth()
+    const navigate = useNavigate()
+
+    // ── State ──────────────────────────────────────────────────────────────────
     const [fileName, setFileName] = useState(null)
     const [jdText, setJdText] = useState('')
     const [dragging, setDragging] = useState(false)
+    const [currentPage, setCurrentPage] = useState(1)
+
+    // ── Constants ──────────────────────────────────────────────────────────────
+    const ITEMS_PER_PAGE = 6
     const fileRef = useRef()
 
-    const navigate = useNavigate()
-
+    // ── Event Handlers ─────────────────────────────────────────────────────────
     const handleFile = (file) => {
         if (file && file.type === 'application/pdf') {
             setFileName(file.name)
@@ -26,7 +37,7 @@ const Home = () => {
         handleFile(file)
     }
 
-    const handleGenrateReport = async () => {
+    const handleGenerateReport = async () => {
         try {
             const resumeFile = fileRef.current.files[0]
             const report = await generateReport({ jobDescription: jdText, resumeFile })
@@ -36,17 +47,34 @@ const Home = () => {
             }
             navigate(`/interview/${report._id}`)
         } catch (error) {
-             console.log(error)
+            console.error('Report generation error:', error)
         }
-
     }
 
-    if (loading) return <Loading variant="report" />
+    const onLogout = async () => {
+        await handleLogout()
+        navigate('/login')
+    }
+    // ── Computed Values ────────────────────────────────────────────────────────
     const wordCount = jdText.trim() ? jdText.trim().split(/\s+/).length : 0
+    const totalPages = Math.ceil(reports.length / ITEMS_PER_PAGE)
+    const paginatedReports = reports.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    )
 
+    // ── Effects ────────────────────────────────────────────────────────────────
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [reports])
+
+    // ── Loading State ──────────────────────────────────────────────────────────
+    if (loading) return <Loading variant="report" />
+
+    // ── Render ─────────────────────────────────────────────────────────────────
     return (
         <main className='home'>
-
+            {/* Background Elements */}
             <div className="home__bg">
                 <div className="home__orb home__orb--1" />
                 <div className="home__orb home__orb--2" />
@@ -54,6 +82,9 @@ const Home = () => {
                 <div className="home__grid" />
             </div>
 
+            {/* Profile Dropdown */}
+            <ProfileDropdown user={user} onLogout={onLogout} />
+            {/* Hero Section */}
             <div className="home__hero">
                 <span className="home__badge">AI-Powered · Gen AI</span>
                 <h1 className="home__title">
@@ -65,9 +96,9 @@ const Home = () => {
                 </p>
             </div>
 
-
+            {/* Main Card */}
             <div className="home__card">
-
+                {/* Job Description Section */}
                 <div className="home__left">
                     <div className="home__section-label">
                         <span className="home__step">01</span>
@@ -88,6 +119,7 @@ const Home = () => {
 
                 <div className="home__divider" />
 
+                {/* Resume Upload Section */}
                 <div className="home__right">
                     <div className="home__section-label">
                         <span className="home__step">02</span>
@@ -137,10 +169,11 @@ const Home = () => {
                         )}
                     </div>
 
+                    {/* Generate Report Button */}
                     <button
                         className={`home__btn ${jdText.trim() && fileName ? 'home__btn--ready' : ''}`}
                         disabled={!jdText.trim() || !fileName}
-                        onClick={handleGenrateReport}
+                        onClick={handleGenerateReport}
                     >
                         <span>Generate Interview Report</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -153,22 +186,65 @@ const Home = () => {
                     </p>
                 </div>
             </div>
-
-            {reports.length > 0 && (
+            {/* Recent Reports Section */}
+            {reports?.length > 0 && (
                 <section className='recent-reports'>
-                    <h2>My Recent Interview Plans</h2>
+                    <div className='recent-reports__header'>
+                        <h2>My Recent Interview Plans</h2>
+                        <span className='recent-reports__count'>
+                            {reports.length} total
+                        </span>
+                    </div>
+
                     <ul className='reports-list'>
-                        {reports.map(report => (
-                            <li key={report._id} className='report-item' onClick={() => navigate(`/interview/${report._id}`)}>
+                        {paginatedReports.map(report => (
+                            <li key={report._id} className='report-item'
+                                onClick={() => navigate(`/interview/${report._id}`)}>
                                 <h3>{report.title || report.jobDescription?.split('\n')[0] || 'Untitled Position'}</h3>
                                 <p className='report-meta'>Generated on {new Date(report.createdAt).toLocaleDateString()}</p>
-                                <p className={`match-score ${report.matchScore >= 80 ? 'score--high' : report.matchScore >= 60 ? 'score--mid' : 'score--low'}`}>Match Score: {report.matchScore}%</p>
+                                <p className={`match-score ${report.matchScore >= 80 ? 'score--high' : report.matchScore >= 60 ? 'score--mid' : 'score--low'}`}>
+                                    Match Score: {report.matchScore}%
+                                </p>
                             </li>
                         ))}
                     </ul>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className='pagination'>
+                            <button
+                                className='pagination__btn'
+                                onClick={() => setCurrentPage(p => p - 1)}
+                                disabled={currentPage === 1}
+                            >
+                                ← Prev
+                            </button>
+
+                            <div className='pagination__pages'>
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                    <button
+                                        key={page}
+                                        className={`pagination__page ${currentPage === page ? 'pagination__page--active' : ''}`}
+                                        onClick={() => setCurrentPage(page)}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button
+                                className='pagination__btn'
+                                onClick={() => setCurrentPage(p => p + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                Next →
+                            </button>
+                        </div>
+                    )}
                 </section>
             )}
 
+            {/* Features Section */}
             <div className="home__features">
                 {[
                     { icon: '⚡', label: 'ATS Score', desc: 'Know how your resume ranks' },
