@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { _enum } = require("zod/v4/core");
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -30,6 +31,11 @@ const userSchema = new mongoose.Schema({
     resetPasswordExpires: {
         type: Date,
         default: null
+    },
+    provider: {
+        type: String,
+        enum: ["local", "google", "github"],
+        default: "local"
     }
 })
 

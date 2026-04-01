@@ -31,6 +31,7 @@ async (accessToken, refreshToken, profile, done) => {
                 email,
                 googleId: profile.id,
                 password: null,
+                provider: "google"
             })
         }
 
@@ -65,6 +66,7 @@ async (accessToken, refreshToken, profile, done) => {
                 email,
                 githubId: profile.id,
                 password: null,
+                provider: "github"
             })
         }
 

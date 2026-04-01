@@ -11,7 +11,13 @@ async function registerUser(req, res) {
 
     if (!username || !email || !password) {
         return res.status(400).json({
-            message: "All fields are requires"
+            message: "All fields are required"
+        })
+    }
+
+    if (password.length < 6) {
+        return res.status(400).json({
+            message: "Password must be at least 6 characters long"
         })
     }
 
@@ -31,7 +37,8 @@ async function registerUser(req, res) {
         const user = await userModel.create({
             username,
             email,
-            password: hash
+            password: hash,
+            provider: "local"
         });
 
         const token = jwt.sign({
@@ -60,11 +67,25 @@ async function registerUser(req, res) {
 
 async function userLogin(req, res) {
     const { email, password } = req.body;
-    const user = await userModel.findOne({ email });
+
+    if (!email || !password) {
+        return res.status(400).json({
+            message: "Email and password are required"
+        })
+    }
+
+    const user = await userModel.findOne({ email }).select("+password");
 
     if (!user) {
         return res.status(400).json({
             message: "Invalid Credentials"
+        })
+    }
+    if (user.provider !== "local") {
+        const providerName = user.provider.charAt(0).toUpperCase() + user.provider.slice(1)
+
+        return res.status(400).json({
+            message: `This account was created using ${providerName}. Please login with ${providerName}.`
         })
     }
 
@@ -175,6 +196,12 @@ async function resetPassword(req, res) {
         const { token } = req.params
         const { password } = req.body
 
+        if (!password || password.length < 6) {
+            return res.status(400).json({
+                message: 'Password is required and must be at least 6 characters long.'
+            })
+        }
+
         // find user with valid token
         const user = await userModel.findOne({
             resetPasswordToken: token,
@@ -214,7 +241,7 @@ async function handle0AuthSuccess(req, res) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000  
+        maxAge: 7 * 24 * 60 * 60 * 1000
     })
 
     res.redirect(`${process.env.CLIENT_URL}/home`)
