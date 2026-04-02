@@ -10,7 +10,7 @@ const Login = () => {
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('')
-    const API_URL = process.env.VITE_API_URL
+    const API_URL = import.meta.VITE_API_URL
 
 
     const handleChange = (e) => {

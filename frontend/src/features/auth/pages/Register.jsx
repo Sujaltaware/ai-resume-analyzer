@@ -23,7 +23,7 @@ const Register = () => {
 
     const {loading, handleRegister } = useAuth();
     const navigate = useNavigate();
-    const API_URL = process.env.VITE_API_URL
+    const API_URL = import.meta.VITE_API_URL
 
     const [form, setForm] = useState({
         userName: '', email: '', password: '', confirm: ''
