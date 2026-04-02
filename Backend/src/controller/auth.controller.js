@@ -244,7 +244,7 @@ async function handle0AuthSuccess(req, res) {
         maxAge: 7 * 24 * 60 * 60 * 1000
     })
 
-    res.redirect(`${process.env.CLIENT_URL}/home`)
+    res.redirect(`${process.env.CLIENT_URL}/`)
 }
 
 module.exports = { registerUser, userLogin, userLogout, getProfile, forgotPassword, resetPassword, handle0AuthSuccess };

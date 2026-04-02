@@ -27,7 +27,7 @@ export const router = createBrowserRouter([
         element: <ResetPassword />
     },
     {
-        path: "/home",
+        path: "/",
         element: <Protected><Home /></Protected>
     },
     {

@@ -24,7 +24,7 @@ const Login = () => {
         const result = await handleLogin({ email: credentials.email, password: credentials.password });
 
         if (result.success) {
-            navigate('/home')
+            navigate('/')
         } else {
             setError(result.message)
         }
