@@ -10,7 +10,7 @@ const Login = () => {
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('')
-    const API_URL = import.meta.VITE_API_URL
+    const API_URL = import.meta.env.VITE_API_URL
 
 
     const handleChange = (e) => {
@@ -29,7 +29,7 @@ const Login = () => {
             setError(result.message)
         }
     };
-
+    console.log("ENV:", import.meta.env.VITE_API_URL)
     return (
         <main>
             <div className='form-container'>
@@ -45,16 +45,16 @@ const Login = () => {
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                            {error && (
-                                <div className='auth-feedback auth-feedback--error'>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <circle cx="12" cy="12" r="10" />
-                                        <line x1="12" y1="8" x2="12" y2="12" />
-                                        <line x1="12" y1="16" x2="12.01" y2="16" />
-                                    </svg>
-                                    <span>{error}</span>
-                                </div>
-                            )}
+                    {error && (
+                        <div className='auth-feedback auth-feedback--error'>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
+                            </svg>
+                            <span>{error}</span>
+                        </div>
+                    )}
                     <div className="input-group">
                         <label htmlFor="email">Email address</label>
                         <div className="input-wrapper">
