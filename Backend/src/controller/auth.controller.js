@@ -46,7 +46,11 @@ async function registerUser(req, res) {
             email: user.email
         }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
-        res.cookie("token", token);
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None"
+        });
 
         return res.status(201).json({
             message: "User registered successfully",
@@ -102,7 +106,11 @@ async function userLogin(req, res) {
         email: user.email
     }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
-    res.cookie("token", token);
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,      
+        sameSite: "None"
+    });
 
     return res.status(200).json({
         message: "Login successful",

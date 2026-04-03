@@ -6,13 +6,13 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors({
-    origin: ["https://ai-resume-analyzer-tan-nine.vercel.app", "http://localhost:5174"],
+    origin: process.env.CLIENT_URL,
     credentials: true
 }));
 app.use(express.json());
-app.use(passport.initialize()) 
+app.use(passport.initialize())
 app.use(cookieParser());
- 
+
 
 const authRouter = require("./routes/auth.routes");
 const interviewRouter = require("./routes/interview.routes");
@@ -22,6 +22,6 @@ const interviewRouter = require("./routes/interview.routes");
 app.use("/api/auth", authRouter);
 app.use("/api/interview", interviewRouter);
 
- 
+
 
 module.exports = app;
