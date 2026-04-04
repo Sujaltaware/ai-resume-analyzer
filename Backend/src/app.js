@@ -6,8 +6,23 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true)
+
+        const allowed =
+            origin === process.env.CLIENT_URL ||          
+            origin.endsWith('.vercel.app') ||              
+            origin === 'http://localhost:5173'
+
+        if (allowed) {
+            callback(null, true)
+        } else {
+            callback(new Error(`CORS blocked: ${origin}`))
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
 }));
 
 

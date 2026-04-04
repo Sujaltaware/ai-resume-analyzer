@@ -72,7 +72,20 @@ ${jobDescription}
 }
 
 async function generatePdfFromHtml(htmlContent) {
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({
+        headless: 'new',
+        args: [
+            '--no-sandbox',                      // ✅ required on Render/Linux
+            '--disable-setuid-sandbox',          // ✅ required on Render/Linux
+            '--disable-dev-shm-usage',           // ✅ prevents memory issues
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',                  // ✅ important for Render free tier
+            '--disable-gpu'
+        ],
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined
+    })
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: "networkidle0" })
 
