@@ -1,7 +1,8 @@
 const { GoogleGenAI } = require("@google/genai");
 const { z } = require("zod")
 const { zodToJsonSchema } = require("zod-to-json-schema")
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
+const chromium = require("@sparticuz/chromium");
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY });
 
@@ -73,19 +74,14 @@ ${jobDescription}
 
 async function generatePdfFromHtml(htmlContent) {
     const browser = await puppeteer.launch({
-        headless: 'new',
-        args: [
-            '--no-sandbox',                      // ✅ required on Render/Linux
-            '--disable-setuid-sandbox',          // ✅ required on Render/Linux
-            '--disable-dev-shm-usage',           // ✅ prevents memory issues
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--single-process',                  // ✅ important for Render free tier
-            '--disable-gpu'
-        ],
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: process.env.NODE_ENV === 'production'
+            ? await chromium.executablePath()   // ✅ uses sparticuz chrome on Render
+            : undefined,                         // ✅ uses local chrome locally
+        headless: chromium.headless,
     })
+
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: "networkidle0" })
 
