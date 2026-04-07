@@ -16,7 +16,7 @@
 
 <br/>
 
-🚀 **[Live Demo](https://ai-resume-analyzer-rust-one.vercel.app)** &nbsp;·&nbsp; 🐛 **[Report Bug](../../issues)** &nbsp;·&nbsp; ✨ **[Request Feature](../../issues)**
+🚀 **[Live Demo](https://ai-resume-analyzer-rust-one.vercel.app)**
 
 </div>
 
